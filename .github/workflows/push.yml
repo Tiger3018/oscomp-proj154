@@ -1,0 +1,29 @@
+name: push to gitlab CD
+
+on:
+  push:
+    branches:
+      - '*'
+# schedule:
+#   - cron: '30 10 */10 * *'
+
+jobs:
+  deploy_trigger:
+    name: Deploy actions needed to be triggered to run.
+    runs-on: ubuntu-latest
+#   env:
+#     GIT_AUTHOR_NAME    : github-actions[bot]
+#     GIT_AUTHOR_EMAIL   : 41898282+github-actions[bot]@users.noreply.github.com
+#     GIT_COMMITTER_NAME : github-actions[bot]
+#     GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+      # https://github.community/t/github-actions-bot-email-address/17204/5
+    steps:
+    - name: pull
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: '0'
+    - name: push
+      run: |
+        git remote add gitlab https://tiger3018:${{ secrets.io_push }}@gitlab.eduxiji.net/tiger3018/proj154
+        git status
+        git push gitlab -f

@@ -9,7 +9,7 @@ on:
 
 jobs:
   deploy_trigger:
-    name: Deploy actions needed to be triggered to run.
+    name: One step to push
     runs-on: ubuntu-latest
 #   env:
 #     GIT_AUTHOR_NAME    : github-actions[bot]
@@ -24,6 +24,6 @@ jobs:
         fetch-depth: '0'
     - name: push
       run: |
-        git remote add gitlab https://tiger3018:${{ secrets.io_push }}@gitlab.eduxiji.net/tiger3018/proj154
+        git remote add gitlab https://tiger3018:${{ secrets.io_push }}@gitlab.eduxiji.net/tiger3018/project788067-124751/
         git status
         git push gitlab -f

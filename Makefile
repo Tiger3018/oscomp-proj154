@@ -21,7 +21,7 @@ ARCH ?= $(SUBARCH)
 CROSS_COMPILE ?=
 KVER := $(shell uname -r)
 KSRC := /lib/modules/$(KVER)/build
-INSTALL_PREFIX ?= 
+INSTALL_PREFIX ?=
 
 $(MODULE_NAME)-y += src/proc.o
 

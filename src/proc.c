@@ -56,9 +56,9 @@ static int probe_module_init(void)
 	struct proc_dir_entry *entry_file = NULL;
 	print_modules();
 	gprocdir = proc_mkdir("probe", NULL);
-	if(gprocdir == NULL)
-	{
-		return -(ENOMEM); // https://github.com/PacktPublishing/Linux-Kernel-Programming-Part-2/blob/2b66d5/ch2/procfs_simple_intf/procfs_simple_intf.c#L313
+	if (gprocdir == NULL) {
+		return -(
+			ENOMEM); // https://github.com/PacktPublishing/Linux-Kernel-Programming-Part-2/blob/2b66d5/ch2/procfs_simple_intf/procfs_simple_intf.c#L313
 	}
 	entry_file =
 		proc_create("dkms_proc", 0766, gprocdir, &proc_ops_interrupt);

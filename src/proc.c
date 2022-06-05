@@ -4,14 +4,30 @@
  */
 // #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+// necessary for linux module
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/version.h>
-// #include <linux/livepatch.h>
+// basic memory management and data structure
+#include <linux/list_sort.h>
+#include <linux/mm.h>
 // #include <linux/sched/mm.h>
+// interrupt and timer utility
+#include <linux/irq.h>
+#include <linux/timer.h>
+#include <linux/hrtimer.h>
+// procfs utility
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
+// mutex lock utility
 #include <linux/mutex.h>
+
+/*Linked List Node*/
+struct probe_list {
+	struct list_head list; //linux kernel list implementation
+	int data;
+};
+static LIST_HEAD(probe_list_head);
 
 static int variable;
 static struct proc_dir_entry *gprocdir;
@@ -41,8 +57,8 @@ static const struct proc_ops proc_ops_interrupt = {
 }; /* https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=97a3253 */
 #endif
 
-module_init(probe_module_init);
-module_exit(probe_module_exit);
+module_init(probe_module_init); // or init_module()
+module_exit(probe_module_exit); // or
 module_param(variable, int, 0);
 MODULE_PARM_DESC(variable, "replace (default=0)");
 MODULE_AUTHOR("Author");
@@ -51,32 +67,49 @@ MODULE_LICENSE("GPL");
 MODULE_INFO(DKMS_Module, "Y");
 DEFINE_MUTEX(mtx);
 
-static int probe_module_init(void)
+static int __init probe_module_init(void) // TODO the meaning and usage of __init
 {
 	struct proc_dir_entry *entry_file = NULL;
-	print_modules();
+	// print_modules();
+	/** procfs */
 	gprocdir = proc_mkdir("probe", NULL);
 	if (gprocdir == NULL) {
-		return -(
-			ENOMEM); // https://github.com/PacktPublishing/Linux-Kernel-Programming-Part-2/blob/2b66d5/ch2/procfs_simple_intf/procfs_simple_intf.c#L313
+		goto procfs_error;
 	}
 	entry_file =
 		proc_create("dkms_proc", 0766, gprocdir, &proc_ops_interrupt);
-	if (entry_file != NULL) {
-	} else {
-		remove_proc_subtree("probe", NULL);
-		return -(ENOMEM);
-		// PTR_ERR();
-		/* return probe_module_exit(); **/
+	if (entry_file == NULL) {
+		goto procfs_error;
+	}
+	/** config and irq management */
+	struct my_list *temp_node = NULL;
+	pr_info("probe_list\n");
+	temp_node = kmalloc(sizeof(struct probe_list),
+			    GFP_KERNEL); // TODO GFP_KERNEL
+	if (temp_node == NULL) {
+		goto kmalloc_error;
 	}
 	pr_debug("probe init!");
 	return 0;
+error:
+	//list_del();
+kmalloc_error:
+	kfree(temp_node);
+procfs_error:
+	remove_proc_subtree("probe", NULL);
+error_return:
+	return -(ENOMEM);
 }
 
-static void probe_module_exit(void)
+static void __exit probe_module_exit(void)
 {
 	remove_proc_subtree("probe", NULL);
-	pr_debug("probe exit!");
+	struct probe_list *cursor, *temp;
+	list_for_each_entry_safe (cursor, temp, &probe_list_head, list) {
+		list_del(&cursor->list);
+		kfree(cursor);
+	}
+	pr_info("probe exit!");
 }
 
 static int probe_interrupt_handle(struct seq_file *seq, void *v)

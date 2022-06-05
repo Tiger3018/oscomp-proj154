@@ -1,6 +1,8 @@
 # 全国大学生计算机系统能力大赛 OSCOMP proj154
 
-> original task on <https://github.com/oscomp/proj154-linux-realtime-probe-tool>.
+> Original task on <https://github.com/oscomp/proj154-linux-realtime-probe-tool>.
+>
+> Original repository at <https://github.com/tiger3018/oscomp-proj154>.
 
 See [devops.md](./devops.md) for infomation about project's analyses, design, plan, milestone, unit-test status and problem-solving.
 
@@ -23,7 +25,7 @@ blank.
 When developing, you can manually compile and re-insert module.
 
 ```shell
-
+make && (sudo rmmod DKMS_Module; sudo insmod DKMS_Module.ko)
 ```
 
 It's recommended to use the stable module with dkms.
@@ -31,7 +33,6 @@ It's recommended to use the stable module with dkms.
 ```shell
 
 ```
-
 
 ### Virtual Machine on QEMU (for unit test, etc.)
 

@@ -4,6 +4,8 @@
 >
 > compare to oscamp/proj122 oscomp/proj133 oscamp/proj118 oscamp/proj6
 
+[TOC]
+
 ## General
 
 According to the document, an user space client and a kernel module should be implemented and communicate with each other by socket API, where procfs is used in kernel space. This kernel module should be reliable (task 3), sensitive about every given IT (interrupt) and corresponding process.
@@ -23,17 +25,21 @@ We also have these concerns related to the project's topic:
 
   An dkms module with a functional procfs (or similar) implementation, works on kernel 5.15 (a LTS version).
 
+  TODO: Test the function of dkms.
+
 - [ ] Week 2
 
-  Based on `kmalloc()` and `timer`,
+  Based on `kmalloc()` and `timer`, accomplish basic probe worker (at ms intervals) and file operation callback for irq probe. (Working)
 
-  Based on
+  Try `hrtimer` with probe or livepatch for high accuracy probe worker.
 
 - [ ] Week 3
 
   Out-of-tree module's loading at boot time (with `modprobe` or static load with `/etc/modules-load.d` and `mkinitramfs`), configuration loading.
 
-- [ ] **Time**
+  Configure a ci test with qemu environment in docker.
+
+- [ ] N / A
 
   (Postponed) Implement a rust version
 
@@ -43,7 +49,11 @@ We also have these concerns related to the project's topic:
 
 - [ ] CI for unit-test
 
-  -
+  - to be implement.
+
+- [ ] Misc
+
+  - [ ] other modern interface for user-space interaction with the probe.
 
 ## Knowledge Bank
 
@@ -90,7 +100,23 @@ _See <https://unix.stackexchange.com/questions/680689/load-kernel-module-at-boot
 
 term: NMI (Non Maskable Interrupt), SMP(Symmetric multiprocessing)
 
+#### RTLinux with preemption
+
 #### rt-tests
+
+_See <https://wiki.linuxfoundation.org/realtime/documentation/howto/tools/rt-tests> and <https://wiki.archlinux.org/title/Realtime_kernel_patchset>_
+
+### Probe / Tracepoint versus Livepatch
+
+#### Probe and specific mechanic
+
+_See <https://gitlab.eduxiji.net/202030445374/project788067-100200/-/blob/master/records/0525.md>, ch4 of book[^kpbook]_
+
+#### Livepatch
+
+_See <https://developer.ibm.com/tutorials/live-patching-the-linux-kernel/>, kernel's [`/lib/livepatch`](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/lib/livepatch?id=fc80c51)_
+
+A prototype at [livepatch.c](./src/livepatch.c). Compiled successfully but with the execution error.
 
 ### Programming Prerequisites
 
@@ -115,9 +141,9 @@ make[1]: *** [Makefile:1794: modules] Error 2
 
 ## Credits
 
-- Linux Kernel Programming Part 2 (2021) (9781801079518)
+- Linux Kernel Programming Part 2 : Char Device Drivers and Kernel Synchronization (2021) (9781801079518)
 
-  _By Kaiwan N Billimoria_
+  [^kpbook] : _By Kaiwan N Billimoria_
 
 - The Linux Kernel Module Programming Guide ver 2.6.4 (2007)
 

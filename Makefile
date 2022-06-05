@@ -24,8 +24,9 @@ KSRC := /lib/modules/$(KVER)/build
 INSTALL_PREFIX ?=
 
 $(MODULE_NAME)-y += src/proc.o
+LIVE_PATCH-y += src/livepatch.o
 
-obj-m := $(MODULE_NAME).o
+obj-m := $(MODULE_NAME).o LIVE_PATCH.o
 
 # That's our default target when none is given on the command line
 PHONY := __all
